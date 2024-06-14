@@ -1,5 +1,322 @@
-template-repository (1.0-1) unstable; urgency=medium
+sdl12-compat (1.2.68-2) unstable; urgency=medium
 
-  * Initial release
+  * d/p/sdl.m4-Call-PKG_CONFIG-rather-than-hard-coding-pkg-config.patch:
+    Add patch from upstream git to fix cross-compilation of ltris and
+    possibly others. Thanks to Helmut Grohne (Closes: #1059749)
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Simon McVittie <smcv@debian.org>  Tue, 02 Jan 2024 15:09:33 +0000
+
+sdl12-compat (1.2.68-1) unstable; urgency=medium
+
+  * New upstream stable release
+    - Functionally equivalent to 1.2.66
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 26 Sep 2023 19:57:49 +0100
+
+sdl12-compat (1.2.66-1) unstable; urgency=medium
+
+  * New upstream prerelease (1.2.68 rc1)
+    - Avoid reporting unscaled mouse coordinates, fixing mouse offset in
+      Sid Meier's Alpha Centauri
+    - Make it possible to limit bits-per-pixel to a value from a hint/quirk
+    - Quirk workaround for: Hyperspace Delivery Boy
+  * d/gbp.conf: Back to the debian/latest branch
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 15 Sep 2023 09:27:02 +0100
+
+sdl12-compat (1.2.64+git20230904+g9359cfa-1) experimental; urgency=medium
+
+  * New upstream git snapshot
+    - Improve compatibility with games that incorrectly try to free the
+      video surface (Closes: #1041416)
+    - Add a hint/quirk for forcing XInitThreads to be called
+    - Add quirks table entries for Mark of the Ninja (Closes: #1051106)
+      and Trine
+    - Fix return value of SDL_SetPalette(): 0 on error, 1 on success
+    - Fix a crash if SDL_LoadWAV() fails to open the file
+    - Improve compile-time robustness with newer SDL2
+    - Update included copy of dr_mp3 (no functional changes)
+    - macOS- and OS/2-specific changes not relevant to Debian
+  * d/p/SDL_config.h-Assume-that-all-platforms-have-ISO-C89-stdde.patch,
+    d/p/include-Use-struct-private_hwdata-incomplete-type-for-API.patch,
+    d/p/SDL_config-Define-HAVE_MALLOC_H-on-glibc-based-platforms.patch:
+    Drop patches, applied upstream
+  * d/gbp.conf, d/watch.git-snapshots: Configure for git snapshots
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 12 Sep 2023 16:06:09 +0100
+
+sdl12-compat (1.2.64-5) unstable; urgency=medium
+
+  * Release to unstable (transition: #1039911)
+    - The source package doesn't contain X11 extensions (Closes: #465780)
+    - libsdl1.2debian no longer links to the GPL libcaca library
+      (Closes: #871807)
+    - This version of SDL_opengl.h no longer includes glext.h
+      (Closes: #925324)
+    - This finally makes libsdl1.2-dev multiarch co-installable
+      (Closes: #932372)
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 11 Jul 2023 21:43:08 +0100
+
+sdl12-compat (1.2.64-4+exp1) experimental; urgency=medium
+
+  * Take over libsdl1.2debian, libsdl1.2-dev from SDL 1.2 classic.
+    This makes sdl12-compat into Debian's default implementation of
+    the SDL 1.2 API and ABI. libsdl1.2-compat{,-shim,-dev} become
+    transitional packages; for full compatibility with the way
+    libsdl1.2-compat used to work, it still contains symlinks in
+    /usr/lib/*/sdl12-compat, which can be LD_PRELOADed or prepended to the
+    LD_LIBRARY_PATH.
+  * Upload to experimental until we're ready to do this transition
+
+ -- Simon McVittie <smcv@debian.org>  Thu, 29 Jun 2023 12:28:24 +0100
+
+sdl12-compat (1.2.64-4) unstable; urgency=medium
+
+  * Add patches from upstream for better bug-for-bug compatibility with
+    recompiling SDL 1.2 code
+    - d/p/SDL_config.h-Assume-that-all-platforms-have-ISO-C89-stdde.patch:
+      Always include <stddef.h>, which berusky assumes we will do
+      (mitigates: #1039439)
+    - d/p/include-Use-struct-private_hwdata-incomplete-type-for-API.patch:
+      Use the same naming for a private struct member that asc assumes we
+      will do (mitigates: #1039574)
+    - d/p/SDL_config-Define-HAVE_MALLOC_H-on-glibc-based-platforms.patch:
+      Define HAVE_MALLOC_H, which freespace2 assumes we will do
+      (mitigates: #1012232)
+  * d/p/debian/sdl-config-Remove-libdir-for-multiarch-co-installability.patch:
+    Move to debian subdirectory to distinguish this non-upstreamable patch
+
+ -- Simon McVittie <smcv@debian.org>  Thu, 29 Jun 2023 10:55:32 +0100
+
+sdl12-compat (1.2.64-3) unstable; urgency=medium
+
+  * d/control: libsdl1.2-compat-dev depends on GL, GLU headers.
+    <SDL/SDL_opengl.h> depends on these, and some SDL-dependent packages
+    like achilles and antigrav have also traditionally assumed that the
+    SDL -dev package would arrange for GL headers to be provided.
+    (Mitigates: #1039072)
+  * d/control: libsdl1.2-compat-dev Depends on pkgconf.
+    This is a workaround for packages that assumed that a dependency
+    on libsdl1.2-dev would pull in pkg-config and therefore provide the
+    pkg.m4 macros, such as adplay.
+    (Mitigates: #1039074)
+  * d/control: Make libsdl1.2-compat-dev depend on libsdl2-dev.
+    This is not actually a real dependency, but it's an easy way to pull
+    in a lot of the packages that libsdl1.2-dev traditionally depended
+    on without having to list them explicitly, making it less likely
+    that dependent packages will FTBFS with libsdl1.2-compat-dev.
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 26 Jun 2023 11:09:53 +0100
+
+sdl12-compat (1.2.64-2) unstable; urgency=medium
+
+  * Release to unstable
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 12 Jun 2023 14:23:44 +0100
+
+sdl12-compat (1.2.64-1) experimental; urgency=medium
+
+  * New upstream release
+    - Compatibility with: Steel Storm Burning Retribution
+      (based on an older darkplaces engine)
+
+ -- Simon McVittie <smcv@debian.org>  Thu, 01 Jun 2023 10:34:32 +0100
+
+sdl12-compat (1.2.62-1) experimental; urgency=medium
+
+  * New upstream prerelease
+    - Compatibility with: Alpha Centauri, tuxfootball, xrick
+    - Quirk workarounds for: freedroid, grafx2
+  * d/patches: Drop most patches, included upstream
+  * d/copyright: Update
+
+ -- Simon McVittie <smcv@debian.org>  Thu, 18 May 2023 17:29:51 +0100
+
+sdl12-compat (1.2.60-2) experimental; urgency=medium
+
+  * d/patches: Add post-release bug fixes from upstream.
+    This fixes compatibility with boswars, fillets-ng and pink-pony.
+
+ -- Simon McVittie <smcv@debian.org>  Wed, 30 Nov 2022 15:28:25 +0000
+
+sdl12-compat (1.2.60-1) unstable; urgency=medium
+
+  * New upstream release
+  * d/p/fix-SDL12COMPAT_MAX_VIDMODE.patch:
+    Add a post-release bug fix as a patch
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 28 Oct 2022 18:09:42 +0100
+
+sdl12-compat (1.2.58-1) experimental; urgency=medium
+
+  * New upstream prerelease
+  * d/p/RestoreDestAlpha-Fix-out-of-bounds-access-to-buffer.patch:
+    Drop patch, included upstream
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 03 Oct 2022 10:40:31 +0100
+
+sdl12-compat (1.2.56-2) unstable; urgency=medium
+
+  * d/p/Revert-video-Optimize-temporarily-saving-of-dest-alpha-fo.patch:
+    Drop patch, superseded by the one below
+  * d/p/RestoreDestAlpha-Fix-out-of-bounds-access-to-buffer.patch:
+    Use a more minimal solution for the amoebax crash seen with 1.2.54,
+    which has been applied upstream
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 19 Sep 2022 15:10:25 +0100
+
+sdl12-compat (1.2.56-1) unstable; urgency=medium
+
+  * d/watch: Update for Github website changes
+  * New upstream release
+  * Update symbols files to add new SDL12COMPAT_GetWindow()
+  * Drop patches that were included in the upstream release
+  * d/p/Revert-video-Optimize-temporarily-saving-of-dest-alpha-fo.patch:
+    Revert a commit that causes a crash in amoebax
+
+ -- Simon McVittie <smcv@debian.org>  Sun, 18 Sep 2022 15:39:06 +0100
+
+sdl12-compat (1.2.54-1) experimental; urgency=medium
+
+  * New upstream prerelease
+  * d/patches: Add post-prerelease bug fixes from upstream
+  * d/watch.devel: Add a parallel watch file for prereleases
+  * Update Lintian overrides
+  * Standards-Version: 4.6.1 (no changes required)
+
+ -- Simon McVittie <smcv@debian.org>  Mon, 05 Sep 2022 12:57:46 +0100
+
+sdl12-compat (1.2.52-4) unstable; urgency=medium
+
+  * d/rules: Normalize permissions of installed-tests.
+    This avoids the permissions (in particular the group-write bit)
+    varying when built with a different umask. (Closes: #1006870)
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 08 Mar 2022 11:25:11 +0000
+
+sdl12-compat (1.2.52-3) unstable; urgency=medium
+
+  * Remove a duplicate line from the previous changelog entry
+  * Wrap and sort lists of dependencies, maintainers, etc.
+  * d/libsdl1.2-compat-shim.links: Fix broken symlink
+  * d/rules: Run dh_makeshlibs on all packages
+  * d/control: Require lockstep upgrades
+  * Ensure that dh_makeshlibs works for libsdl1.2-compat-shim.
+    dh_makeshlibs only acts on regular files, not symlinks, so install the
+    library as a regular file during dh_install and replace it with a
+    symlink after dh_makeshlibs has run.
+    Disable automatic -dbgsym generation for libsdl1.2-compat-shim, to
+    avoid it generating a libsdl1.2-compat-shim-dbgsym package that would
+    collide with libsdl1.2-compat-dbgsym.
+  * Update Lintian overrides
+
+ -- Simon McVittie <smcv@debian.org>  Sat, 05 Mar 2022 15:14:56 +0000
+
+sdl12-compat (1.2.52-2) experimental; urgency=medium
+
+  * Add a libsdl1.2-compat-tests package containing (mostly manual) tests
+    - d/tests: Add a smoke-test using the installed-tests
+  * Add a libsdl1.2-compat-dev package (Closes: #990125)
+    - d/p/sdl-config-Remove-libdir-for-multiarch-co-installability.patch:
+      Add patch to make libsdl1.2-compat-dev multiarch co-installable.
+      This is a simplified version of what src:libsdl2 does.
+    - d/tests: Add a superficial autopkgtest for the -dev package
+    - Have a symbols file for each of the shared library's locations.
+      In each symbols file, distinguish between symbols that already
+      existed in "real" SDL 1.2 (the default dependency template),
+      and symbols that only exist in sdl12-compat, usually because in
+      "real" SDL 1.2 they were always inlined (alternative dependency
+      template 1).
+      Symbols that existed in "real" SDL 1.2 generate a dependency on
+      libsdl1.2debian, which can be satisfied by either the real SDL
+      1.2 or libsdl1.2-compat-shim. This must be the default dependency
+      template, because the default dependency template is the one that
+      is used for the SONAME reference to the library itself.
+      Symbols that only exist in sdl12-compat generate a dependency on
+      the appropriate -compat package.
+  * d/*.symbols: Use the released version, not the snapshot
+  * Upload to experimental for NEW processing
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 04 Mar 2022 22:23:18 +0000
+
+sdl12-compat (1.2.52-1) unstable; urgency=medium
+
+  * New upstream release
+  * d/watch: Use Github releases
+  * d/gbp.conf: Use upstream VCS tags
+  * d/upstream/metadata: Add
+  * Add myself to Uploaders
+  * d/copyright: Use the SPDX name for the Unlicense public-domain dedication
+  * d/copyright: Use the copyright-format 1.0 name for the Zlib license.
+    This happens to be the same as the SPDX name.
+  * d/copyright: Use the copyright-format 1.0 name for the Expat license.
+    SPDX calls this the MIT license, but copyright-format 1.0 calls it Expat.
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 04 Mar 2022 18:43:14 +0000
+
+sdl12-compat (0.0~git20220302.fede2ff-1) unstable; urgency=medium
+
+  * Team upload
+  * New upstream snapshot
+
+ -- Simon McVittie <smcv@debian.org>  Wed, 02 Mar 2022 16:34:49 +0000
+
+sdl12-compat (0.0~git20220128.b3328aa-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+
+ -- Stephen Kitt <skitt@debian.org>  Fri, 18 Feb 2022 22:31:39 +0100
+
+sdl12-compat (0.0~git20211212.74b56a8-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+
+ -- Stephen Kitt <skitt@debian.org>  Sun, 12 Dec 2021 17:50:26 +0100
+
+sdl12-compat (0.0~git20211015.36a09e4-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+
+ -- Stephen Kitt <skitt@debian.org>  Fri, 29 Oct 2021 17:27:46 +0200
+
+sdl12-compat (0.0~git20210909.a98590a-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+  * Since the library dlopens libsdl2, the package needs an explicit
+    dependency on libsdl2-2.0-0.
+  * Standards-Version 4.6.0, no change required.
+
+ -- Stephen Kitt <skitt@debian.org>  Sat, 11 Sep 2021 19:07:37 +0200
+
+sdl12-compat (0.0~git20210814.a3bfcb2-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+
+ -- Stephen Kitt <skitt@debian.org>  Thu, 19 Aug 2021 16:21:22 +0200
+
+sdl12-compat (0.0~git20210628.cf47f88-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+  * Fix the incorrect mention of SDL 1.0 in the package descriptions.
+
+ -- Stephen Kitt <skitt@debian.org>  Tue, 29 Jun 2021 21:36:33 +0200
+
+sdl12-compat (0.0~git20210619.4ad7ba6-1) unstable; urgency=medium
+
+  * New upstream snapshot (with the ability to provide a development
+    package, but this isn’t enabled yet).
+
+ -- Stephen Kitt <skitt@debian.org>  Mon, 21 Jun 2021 11:55:55 +0200
+
+sdl12-compat (0.0~git20210519.ebcbb11-1) unstable; urgency=medium
+
+  * New upstream snapshot.
+
+ -- Stephen Kitt <skitt@debian.org>  Sun, 23 May 2021 15:55:49 +0200
+
+sdl12-compat (0.0~git20210312.a719acd-1) unstable; urgency=low
+
+  * Initial release. Closes: #985170.
+
+ -- Stephen Kitt <skitt@debian.org>  Fri, 02 Apr 2021 22:35:55 +0200

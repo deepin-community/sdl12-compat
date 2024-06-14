@@ -1,0 +1,9 @@
+/*.debhelper.log
+/*.substvars
+/.debhelper/
+/debhelper-build-stamp
+/libsdl1.2-compat-dev/
+/libsdl1.2-compat-shim/
+/libsdl1.2-compat-tests/
+/libsdl1.2-compat/
+/tmp/

@@ -1,0 +1,12 @@
+version=4
+opts="\
+    compression=gzip, \
+    dversionmangle=s/\+(?:git)?[0-9]*(?:\+g[0-9a-f]*)//, \
+    downloadurlmangle=s#/releases/tag/#/archive/refs/tags/#;s#((?:pre)?release-?@ANY_VERSION@)$#$1/@PACKAGE@-$2.tar.gz#, \
+    filenamemangle=s#(?:pre)?release-?@ANY_VERSION@#@PACKAGE@-$1.tar.gz#" \
+https://github.com/libsdl-org/@PACKAGE@/tags .*/releases/tag/(?:pre)?release-?@ANY_VERSION@
+
+# or:
+#opts="mode=git" \
+#https://github.com/libsdl-org/@PACKAGE@ \
+#refs/tags/(?:pre)?release-@ANY_VERSION@
