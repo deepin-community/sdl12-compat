@@ -1,4 +1,24 @@
 #!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+include /usr/share/dpkg/default.mk
+
+# used in dh_install, dh_link
+export ABI_VERSION=$(DEB_VERSION_UPSTREAM)
 
 %:
-	dh $@
+	dh $@ -Scmake
+
+# debhelper >= 13.4 makes all of /usr/libexec executable, which is not
+# quite right for installed-tests (#1006927)
+override_dh_fixperms:
+	dh_fixperms -Xusr/libexec/installed-tests
+	chmod --recursive a+rX,u+w,og-w debian/*-tests/usr/libexec/installed-tests
+
+override_dh_gencontrol:
+	dh_gencontrol -- -Vsdl12compat:Takeover-Version=1.2.64-4+exp1
